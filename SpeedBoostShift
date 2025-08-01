@@ -1,0 +1,31 @@
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+local speed = 2  -- Valeur à ajuster pour aller plus vite
+local moving = false
+
+-- On écoute si la touche shift est maintenue
+UserInputService.InputBegan:Connect(function(input, processed)
+	if input.KeyCode == Enum.KeyCode.LeftShift then
+		moving = true
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input, processed)
+	if input.KeyCode == Enum.KeyCode.LeftShift then
+		moving = false
+	end
+end)
+
+-- Simule la vitesse sans changer WalkSpeed
+RunService.RenderStepped:Connect(function(dt)
+	if moving then
+		local moveDirection = player:GetMouse().Hit.Position - hrp.Position
+		moveDirection = Vector3.new(moveDirection.X, 0, moveDirection.Z).Unit
+		hrp.CFrame = hrp.CFrame + moveDirection * speed
+	end
+end)
